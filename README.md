@@ -33,7 +33,41 @@ docker 가 실행하는 여러개의 서버를 관리하는 도구
         로컬에서 요청을 보냈고 [로컬 컴퓨터] [파드] 사이에 포트를 뚫어서 컨테이너에 요청을 했고 응답을 받게 된 것이다.
   14. kubectl delete pod nginx-pod 파드 삭제
   15. kubectl get pods 삭제 되었는지 확인
-  16. 
+
+# 쿠보네티스 Spring boot 서버 파드로 뛰우기
+  1. spring.io 에서 demo 파일 하나 생성, spring web, spring devel tool 2개 추가
+  2. AppController 생성(git 참고)
+  3. spring boot 실행
+  4. error 시 8080 포트 사용 중 인거임
+  5. Dockerfile 생성
+  6. gradlew clean build
+  7. build 파일이 생성이 된다. build/libs 부분 안에
+  8. docker build -t spring-server . 도커 이미지 생성
+  9. docker image ls (이미지 만들어 졌는지 확인)
+  10. spring-pod.yaml 파일 생성
+  11. 이 파일을 참고해서 pod 생성
+  12. kubectl apply -f spring-pod.yaml 생성
+  13. kubectl get pods 확인 error 가 발생했는지 확인을 할 수가 있다.
+  14. 이미지 build 잘 했고, 이미지 있는지 확인을 했는데 왜 오류가 났는지 설명해줘
+  15. 이걸 알기 위해서는 이미지 풀 정책(image pull policy) 을 알아야 한다.
+      1 Always : 로컬에서 이미지를 가져오지 않고, 무조건 레지스토리(= Dockerhub, ECR 과 같은 원격 이미지 저장소)에서 가져온다.  
+      2 IfNotPresent : 로컬에서 이미지를 먼저 가져온다. 만약 로컬에 이미작 없는 경우에만 레지스토리에서 가져온다.  
+      3 Never : 로컬에서만 이미지를 가져온다.
+  16. 때문에 yaml 파일에서 설정을 따로 해주어야 한다.
+   ** 그래서 정리하자면 **
+      오류가 난 이유는 latest 태그 이거나, 명시되지 않은 경우 imagePullPolicy는 Always로 설정이 된다.  
+      이 때문에 우리는 오류가 발생한 것이다. 로컬에서 이미지를 가져오지 않기 때문에
+  17. kubectl delete pod spring-pod 기존에 있는 이미지 삭제
+  18. kubectl apply -f spring-pod.yaml 다시 생성
+  19. 정확하게 이미지가 생성이 되었는지 확인을 하기 위해서는
+  20. 1번째 방법 kubectl exec -it spring-pod -- bash 파드 안에 들어가서 거기서 직접 확인해보는 것
+  21. curl localhost:8080 응답확인
+  22. 정상적으로 hellow worldbash 가 뜨는 것을 확인 할 수 있다.
+  23. 그리고 2번쨰 방법인 파드포워드 방식
+  24. kubectl port-forward pod/spring-pod 12345:8080
+  25. 12345(로컬) 8080(파드)
+
+
 
 
 
