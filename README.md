@@ -67,6 +67,22 @@ docker 가 실행하는 여러개의 서버를 관리하는 도구
   24. kubectl port-forward pod/spring-pod 12345:8080
   25. 12345(로컬) 8080(파드)
 
+# 쿠보네티스 nest.js 서버를 파드로 띄워보기
+  1. npm i -g @nestjs/cli
+  2. nest new nest-server
+  3. npm i (의존성 확인)
+  4. npm run start
+  5. localhost:3000 확인
+  6. 도커 파일 생성
+  7. 이유는 next.js 서버를 파드로 뛰울 건, 뛰우기 위해서는 이미지를 받아와서, 이미지를 컨테이너에 뛰운다음에 실행을 시켜준다.
+  8. .dockerginore 파일 생성
+  9. docker build -t nest-server .
+  10. docker image ls
+  11. kubectl apply -f nest-pod.yaml
+  12. kubectl get pods
+  13. kubectl port-forward nest-pod 3000:3000
+  14. kubectl delete pod nest-pod
+  15. kubectl get pods
 
 
 
